@@ -1,0 +1,53 @@
+spring:
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "admin"
+    password: "admin"
+  cloud:
+    function:
+      definition: uppercase;onReceive;myErrorHandler;communication;email;sms
+    stream:
+      bindings:
+#        uppercase-in-0:
+#          destination: uppercase-process
+#          group: processor
+#          error-handler-definition: myErrorHandler
+        communication-in-0:
+          group: communication
+#        reverse-in-0:
+#          destination: reverse
+#          group: processor
+#        uppercase-out-0:
+#          destination: uppercase-values-topic
+#        reverse-out-0:
+#          destination: consumeReverse
+
+        onReceive-in-0:
+          destination: uppercase-values-topic
+          group: consumer
+
+        email-in-0:
+          group: communication
+        sms-in-0:
+          group: communication
+
+      rabbit:
+        bindings:
+          onReceive-in-0:
+            consumer:
+              auto-bind-dlq: true
+#      binders:
+#        rabbit:
+#          type: rabbit
+#          environment:
+#            spring:
+#              rabbitmq:
+#                host: "localhost"
+#                port: 5672
+#                username: "admin"
+#                password: "admin"
+logging:
+  level:
+    org.springframework: DEBUG
+
